@@ -1,0 +1,104 @@
+@startuml
+
+title Out Of Print - Class Diagram
+
+class OutOfPrintShop
+{
+  +Album[] Albums
+  +User[] Users
+  +User Login(String email, String password)
+}
+
+class Artist {
+  -Int Id
+  +String Title
+  +Album[] Albums
+  +Label[] Labels()
+}
+
+class User
+{
+  -Int Id
+  -Int ProfileId
+  +UserProfile Profile
+  +Order[] Orders()
+}
+
+class UserProfile
+{
+  -Int Id,
+  +String FirstName
+  +String LastName
+  +String Email
+  +String Password
+  +String Address // Not Sure
+}
+
+class ShippingCost
+{
+  -Int Id,
+  +Decimal Price
+}
+
+class Label
+{
+  -Int Id
+  +String Title
+  +Album[] Albums()
+  +Artist[] Artists()
+}
+
+class Album {
+  -Int ArtistId
+  -Int LabelId
+  -Int FormatId
+  +String Title
+  +Date Year
+  +String Edition
+  +Image[] Images
+  +String Details
+  +String Condition
+  +String SoundFileUri
+  +Decimal Price
+}
+
+class Format
+{
+  -Int Id
+  +Float Weight
+  +String Title
+}
+
+class Order
+{
+  -Int Id
+  -Int ShippingCostId
+  +Int UserId
+
+  +String DeliveryAddress
+  +String InvocingAddress
+  +OrderLine[] OrderLines
+  +User User
+  +Decimal TotalPrice()
+  +ShippingCost ShippingCost()
+}
+
+class OrderLine
+{
+  Int OrderId
+  Int AlbumId
+}
+
+OutOfPrintShop o-- Album
+OutOfPrintShop o-- User
+Artist o-- Album
+Artist o-- Label
+Label o-- Album
+User o-- Order
+Order o-- OrderLine
+Order *--  ShippingCost
+OrderLine *--  Album
+Album *-- Format
+User *-- UserProfile
+
+@enduml
