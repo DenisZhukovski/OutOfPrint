@@ -20,7 +20,7 @@ The document describes Out of Print data migration steps.
 2. Delete all the items in the data table if the table is not empty.
 3. Choose Import Items
 
-    <img src="docs/ImportItems.png" alt="Import Items" style="width:600px;"/>
+    <img src="docs/ImportItems.png" alt="Import Items" style="width:700px;rotate:90"/>
 4. Select <b>oop_articles_22-12-12_164112.csv</b> file from the location that you stored the file when was doing "<i>Save Excel document as csv file</i>" operation
 5. Once the file was uploaded make sure that there are no warning messages and Editors recongnized all columns.
 
