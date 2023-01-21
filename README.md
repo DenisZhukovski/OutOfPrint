@@ -8,7 +8,7 @@ The document describes Out of Print data migration steps.
 
      <b style="color:gray">Notice:</b> if the row will not be deleted csv file will have the issues.
     ![Alt text](docs/EmptyRow.png?raw=true "Empty Rows")
-3. Make sure that all columns in Excel document have names. Ideally all the names should be in English. The column shold be either removed or name should be assigned. 
+3. Make sure that all columns in Excel document have names. Ideally all the names should be in English. The column should be either removed or name should be assigned. 
 
     <b style="color:darkorange">Important:</b> 3 latest columns in oop_articles_22-12-12_164112.xlsx have no name.  (I gave "<b>Comments</b>", "<b>Notes</b>", "<b>Notes2</b>")
 4. Save Excel document as csv file.
