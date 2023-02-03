@@ -19,19 +19,12 @@ class Artist {
 class User
 {
   -Int Id
-  -Int ProfileId
-  +UserProfile Profile
-  +Order[] Orders()
-}
-
-class UserProfile
-{
-  -Int Id,
   +String FirstName
   +String LastName
   +String Email
   +String Password
   +String Address // Not Sure
+  +Order[] Orders()
 }
 
 class ShippingCost
@@ -99,6 +92,5 @@ Order o-- OrderLine
 Order *--  ShippingCost
 OrderLine *--  Album
 Album *-- Format
-User *-- UserProfile
 
 @enduml

@@ -10,7 +10,7 @@ The document describes the steps for data migration preparation process. The rea
     ![Alt text](docs/images/DataPreparationMigration/EmptyRow.png?raw=true "Empty Rows")
 3. Make sure that all columns in Excel document have names. Ideally all the names should be in English. The column should be either removed or name should be assigned. 
 
-    <b style="color:darkorange">Important:</b> 3 latest columns in oop_articles_22-12-12_164112.xlsx have no name.  (I gave "<b>Comments</b>", "<b>Notes</b>", "<b>Notes2</b>")
+    <b style="color:darkorange">Important:</b> 3 latest columns in oop_articles_22-12-12_164112.xlsx have no name.  ("<b>Comments</b>", "<b>Notes</b>", "<b>Notes2</b>" been assigned to them)
 4. Save Excel document as csv file.
 
     <img src="docs/images/DataPreparationMigration/SaveAsCSV.png" alt="Sace as CSV" style="width:600px;"/>
@@ -58,5 +58,5 @@ Importing orders data is the same operation as the previous but with some small 
 3. Orders have only 4 columns to import. All other detected columns should be just unselected during the mapping.
 4. Once the file was uploaded Tap "Manage Fields" and set OrderReference as a primary field and remove Title field
 
-## Editor X migration data parsing
-To finish the migration follow the steps described in [Data Migration Parsing](DataMigrationParsing.md) section.
+## Editor X migration data processing
+To finish the migration follow the steps described in [Data Migration Processing](DataMigrationParsing.md) section.
