@@ -10,30 +10,40 @@
 **********/
 
 import wixData from 'wix-data';
+import { MigrationCleaner } from 'backend/migration-cleaner';
+import { Migration } from 'backend/migration';
 
-/*** Call the sample multiply function below by copying the following into your page code:
-
- import { multiply } from 'backend/multiplication';
-
- $w.onReady(function () {
-     multiply(4, 5).then(product => {
-         console.log(product);
-     })
-     .catch(error => {
-         console.log(error);
-     });
- });
-
-***/
-
-// Sample backend code in a multiplication.jsw file:
-
-export async function startMigation(usersDatasetId, articlesDatasetId, ordersDatasetId) {
-   return new OutOfPrintMigration(
-        usersDatasetId,
-        articlesDatasetId,
-        ordersDatasetId
-    ).migrateAll();
+export async function startMigation() {
+    try {
+        console.log("Migration started");
+        await new MigrationCleaner(
+            [
+                "OrderLines",
+                "Orders",
+                "ShippingCosts",
+                "Albums",
+                "Formats",
+                "Labels",
+                "Artists",
+                "Users"
+            ]
+        ).clear();
+        await new Migration("ImportFromUsers", "Users", user => {
+            return {
+                "_id": user._id,
+                "Email": user.email,
+            };
+        }).migrate();
+        // await new OutOfPrintMigration(
+        //     "ImportFromUsers",
+		// 	"ImportFromArticles",
+		// 	"ImportFromOrders"
+        // ).migrateAll();
+        console.log("Migration complete");
+    }
+    catch (error) {
+        throw new Error("Migration operation failed.\n" + error.message);
+    }
 }
 
 class OutOfPrintMigration {
@@ -50,17 +60,33 @@ class OutOfPrintMigration {
     }
 
     async migrateUsers() {
-        console.log("users:" + this.usersDatasetId);
-        return "Users migrated";
+        try {
+            console.log("users:" + await wixData.query(this.usersDatasetId).count());
+            return "Users migrated";
+        }
+        catch (error) {
+            throw new Error("Users migration operation failed:" + error.message);
+        }
     }
 
     async migrateArticles() {
-        console.log("articles:" + this.articlesDatasetId);
-        return "Articles migrated";
+        try {
+            console.log("articles:" + await wixData.query(this.articlesDatasetId).count());
+            return "Articles migrated";
+        }
+        catch (error) {
+            throw new Error("Articles migration operation failed:" + error.message);
+        }
     }
 
     async migrateOrders() {
-        console.log("orders:" + this.ordersDatasetId);
-        return "Orders migrated";
+        try {
+            console.log("orders:" + await  wixData.query(this.ordersDatasetId).count());
+            return "Orders migrated";
+        }
+        catch (error) {
+            throw new Error("Orders migration operation failed:" + error.message);
+        }
+        
     }
 }
