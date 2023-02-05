@@ -1,16 +1,19 @@
 import wixData from 'wix-data';
 
-export class Migration {
+export class DataTableMigrationStep {
     constructor (importFrom, targetDataset, map) {
         this.importFrom = importFrom
         this.targetDataset = targetDataset;
         this.map = map; 
     }
 
-    async migrate() {
+    name() {
+        return "migration from " + this.importFrom + " to " + this.targetDataset;
+    }
+
+    async run() {
         try {
             this.total = 0;
-            console.log("migration from " + this.importFrom + "started");
             var entities = await wixData
                 .query(this.importFrom)
                 .find();
@@ -23,7 +26,9 @@ export class Migration {
                 } 
             }
 
-            console.log("migration from " + this.importFrom + "complete");
+            return this.name() + " complete: " 
+                + await wixData.query(this.targetDataset).count() + "/" 
+                + await wixData.query(this.importFrom).count();
         }
         catch (error) {
             throw new Error(

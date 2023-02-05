@@ -1,0 +1,30 @@
+/*********
+ .jsw file
+ *********
+
+ Backend .jsw files contain functions that run on the server side but can be called from page code and frontend files.
+ Use backend functions to keep code private and hidden from a user's browser. More info:
+
+ https://support.wix.com/en/article/velo-web-modules-calling-backend-code-from-the-frontend
+
+**********/
+
+import { OutOfPrintMigration } from 'backend/migration/out-of-print-migration';
+import { LoggedMigration, LoggedMigrationRun } from 'backend/migration/logged-migration';
+import { MigrationRun } from 'backend/migration/migration-run';
+
+export async function startMigation(state) {
+    return await new LoggedMigrationRun(
+        new MigrationRun(
+            new LoggedMigration(
+                new OutOfPrintMigration()
+            ),
+            state
+        )
+    ).run();
+}
+
+export async function startMigationV2() {
+    return "Hello";
+    //await _migration.run();
+}

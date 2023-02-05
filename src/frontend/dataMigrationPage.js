@@ -19,7 +19,11 @@ $w.onReady(async function () {
 		
 		try {
 			$w("#migrationCaption").text = "IN PROGRESS";
-			await startMigation();
+			var state = await startMigation(true);
+			while (!isMigrationSomplete(state)) {
+				await delay(1000);
+				state = await startMigation(false);
+			}
 			$w("#migrationCaption").text = "COMPLETE";
 		}
 		catch (error) {
@@ -27,3 +31,14 @@ $w.onReady(async function () {
 		}
 	});
 });
+
+function isMigrationSomplete(state) {
+	if (state.steps.length > 0) {
+		return state.steps[state.steps.length - 1] == "Complete"
+	}
+	return false;
+}
+
+function delay(ms) {
+	return new Promise(resolve => setTimeout(() => resolve(), ms));
+}
