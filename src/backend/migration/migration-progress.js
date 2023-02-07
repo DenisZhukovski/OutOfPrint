@@ -1,11 +1,15 @@
+import { SmartArray } from 'backend/tools/smart-array';
+
 export class MigrationProgress {
+    constructor() {
+        this.clear();
+    }
     clear() {
         this.steps = [];
         this.error = null;
     }
     onError(exception) {
-        this.steps.push(
-            {
+        this.steps.push({
             name: "Error",
             error: new Error("Migration operation failed.\n" + exception.message)
         });
@@ -14,10 +18,7 @@ export class MigrationProgress {
     }
 
     async step(migrationStep) {
-        this.steps.push({
-            name: migrationStep.name(),
-            result: await migrationStep.run()
-        }); 
+        this.steps.push(await migrationStep.run()); 
     }
 }
 
@@ -33,7 +34,10 @@ export class ContinuedMigrationProgress {
         return this.origin.onError(exception);
     }
     async step(migrationStep) {
-        if (!this.origin.steps.any(step => step.name == migrationStep.name())) {
+        var smartSteps = new SmartArray(this.origin.steps);
+        // Here to implement continue
+        var stepToContinue = smartSteps.firstOrDefault(step => step.name == migrationStep.name() && !step.isComplete());
+        if (stepToContinue == null) {
             return await this.origin.step(migrationStep);
         }
     }
@@ -44,5 +48,9 @@ export class MigrationResult {
         this.name = name;
         this.state = state;
         this.data = data;
+    }
+
+    isComplete() {
+        return this.state == "Complete";
     }
 }

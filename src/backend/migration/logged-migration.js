@@ -15,7 +15,6 @@ export class LoggedMigration {
     }
 }
 
-
 export class LoggedMigrationRun {
     constructor (origin) {
         this.origin = origin;
@@ -27,9 +26,9 @@ export class LoggedMigrationRun {
 
     async run() {
         try {
-            console.log("Migration started");
+            console.log("Migration started.");
             var state = await this.origin.run();
-            console.log("Migration complete");
+            console.log("Migration complete.");
             return state;
         }
         catch (error) {
@@ -40,9 +39,9 @@ export class LoggedMigrationRun {
 
     async continueRun() {
         try {
-            console.log("Migration continued");
+            console.log("Migration continued.");
             var state = await this.origin.continueRun();
-            console.log("Migration complete");
+            console.log("Migration complete.");
             return state;
         }
         catch (error) {
