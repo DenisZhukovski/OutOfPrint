@@ -12,7 +12,6 @@ export class TruncDataMigrationStep {
 
     async run() {
         var results = [];
-
         for (var i = 0; i< this.dataSets.length; i++) {
             var dataSet = this.dataSets[i];
             await wixData.truncate(dataSet);
@@ -23,7 +22,8 @@ export class TruncDataMigrationStep {
         return new MigrationResult(
             this.name(),
             'Complete',
-            results
+            results,
+            stepResult => this
         );
     }
 }

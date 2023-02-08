@@ -1,5 +1,5 @@
 // Velo API Reference: https://www.wix.com/velo/reference/api-overview/introduction
-import { startMigation } from 'backend/dataMigration';
+import { startMigation } from 'backend/data-migration';
 
 $w.onReady(async function () {
 	
@@ -19,10 +19,12 @@ $w.onReady(async function () {
 		
 		try {
 			$w("#migrationCaption").text = "IN PROGRESS";
-			var state = await startMigation(true);
+			var state = await startMigation(null);
+			console.log(state);
 			while (!isMigrationSomplete(state)) {
 				await delay(1000);
-				state = await startMigation(false);
+				state = await startMigation(state);
+				console.log(state);
 			}
 			$w("#migrationCaption").text = "COMPLETE";
 		}
@@ -34,7 +36,7 @@ $w.onReady(async function () {
 
 function isMigrationSomplete(state) {
 	if (state.steps.length > 0) {
-		return state.steps[state.steps.length - 1] == "Complete"
+		return state.steps[state.steps.length - 1].state == "Complete"
 	}
 	return false;
 }

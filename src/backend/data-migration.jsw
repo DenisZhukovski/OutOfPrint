@@ -12,16 +12,21 @@
 import { OutOfPrintMigration } from 'backend/migration/out-of-print-migration';
 import { LoggedMigration, LoggedMigrationRun } from 'backend/migration/logged-migration';
 import { MigrationRun } from 'backend/migration/migration-run';
+import { MigrationProgress } from 'backend/migration/migration-progress';
 
 export async function startMigation(state) {
-    return await new LoggedMigrationRun(
+    var migrationRun = new LoggedMigrationRun(
         new MigrationRun(
             new LoggedMigration(
                 new OutOfPrintMigration()
-            ),
-            state
+            ).steps(),
+            new MigrationProgress(state)
         )
-    ).run();
+    );
+    if (state != null){
+          return await migrationRun.continueRun();
+    }
+    return await migrationRun.run();
 }
 
 export async function startMigationV2() {

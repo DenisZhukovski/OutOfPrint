@@ -1,8 +1,11 @@
 import { SmartArray } from 'backend/tools/smart-array';
 
 export class MigrationProgress {
-    constructor() {
-        this.clear();
+    constructor(state) {
+        this.steps = state != null
+          ? state.steps 
+          : [];
+        this.error = null;
     }
     clear() {
         this.steps = [];
@@ -34,23 +37,42 @@ export class ContinuedMigrationProgress {
         return this.origin.onError(exception);
     }
     async step(migrationStep) {
-        var smartSteps = new SmartArray(this.origin.steps);
-        // Here to implement continue
-        var stepToContinue = smartSteps.firstOrDefault(step => step.name == migrationStep.name() && !step.isComplete());
-        if (stepToContinue == null) {
+        var steps = new SmartArray(this.origin.steps);
+        var stepsToContinue = steps.where(step => step.name == migrationStep.name());
+        if (stepsToContinue.length == 0) {
             return await this.origin.step(migrationStep);
+        }
+        else
+        {
+            for (let index = 0; index < stepsToContinue.length; index++) {
+                let stepToContinue = stepsToContinue[index];
+                if (!stepToContinue.isComplete()) {
+                    migrationStep = stepToContinue.toContinue(migrationStep);
+                    stepToContinue.complete();
+                    return await this.origin.step(migrationStep);
+                }
+            }
         }
     }
 }
 
 export class MigrationResult {
-    constructor(name, state, data) {
+    constructor(name, state, data, onContinue) {
         this.name = name;
         this.state = state;
         this.data = data;
+        this.onContinue = onContinue;
     }
 
     isComplete() {
         return this.state == "Complete";
+    }
+
+    complete() {
+        this.state = "Complete";
+    }
+
+    toContinue() {
+        return this.onContinue(this);
     }
 }

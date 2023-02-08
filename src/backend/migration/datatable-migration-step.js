@@ -1,5 +1,6 @@
 import wixData from 'wix-data';
 import { MigrationResult } from 'backend/migration/migration-progress';
+import { ChunkDataSource } from 'backend/tools/chunk-data-source';
 
 export class DataTableMigrationStep {
     constructor (importFrom, importInto, map) {
@@ -19,9 +20,10 @@ export class DataTableMigrationStep {
             if (entities.length > 0) {
                 await this.bulkMigrate(entities);
                 while (this.importFrom.hasNext()) {
-                    entities = await this.importFrom.next(); 
-                    await this.bulkMigrate(entities);
-                } 
+                    await this.bulkMigrate(
+                        await this.importFrom.next()
+                    );
+                }
             }
 
             return await this.toResult();
@@ -52,7 +54,16 @@ export class DataTableMigrationStep {
             totalImported == totalToImport 
                 ? 'Complete'
                 : 'InProgress',
-            totalImported + "/" + totalToImport
+            totalImported + "/" + totalToImport,
+            stepResult => new DataTableMigrationStep(
+                new ChunkDataSource(
+                    this.importFrom.dataSetId,
+                    stepResult.data.split('/')[0], 
+                    this.importFrom.pageSize
+                ),
+                this.importInto,
+                this.map
+            )
         );
     }
 }

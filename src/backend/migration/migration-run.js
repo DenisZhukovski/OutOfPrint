@@ -1,12 +1,9 @@
-import { MigrationProgress, ContinuedMigrationProgress } from 'backend/migration/migration-progress';
+import { ContinuedMigrationProgress } from 'backend/migration/migration-progress';
 
 export class MigrationRun {
     constructor(steps, state) {
         this.steps = steps;
         this.state = state;
-        if (this.state == null) {
-            this.state = new MigrationProgress();
-        }
     }
 
     status() {
@@ -20,7 +17,6 @@ export class MigrationRun {
                 await continuedState.step(this.steps[i]); 
             }
 
-            this.state.steps.push("Complete");
             return this.state;
         }
         catch (error) {
