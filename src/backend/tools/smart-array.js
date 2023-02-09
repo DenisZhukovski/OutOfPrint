@@ -7,6 +7,16 @@ export class SmartArray {
         return this.firstOrDefault(predicate) != null;
     }
 
+    where(predicate) {
+        var result = [];
+        for (var i = 0; i < this.array.length; i++) {
+            if (predicate(this.array[i])) {
+                result.push(this.array[i]);
+            }
+        }
+        return result;
+    }
+
     firstOrDefault(predicate) {
         for (var i = 0; i < this.array.length; i++) {
             if (predicate(this.array[i])) {

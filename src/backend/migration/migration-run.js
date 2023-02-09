@@ -1,31 +1,25 @@
-import { ContinuedMigrationProgress } from 'backend/migration/migration-progress';
+import { MigrationProgress } from 'backend/migration/migration-progress';
 
 export class MigrationRun {
-    constructor(steps, state) {
+    constructor(steps) {
         this.steps = steps;
-        this.state = state;
+        this.progress = new MigrationProgress();
     }
 
     status() {
-        return this.state;
-    }
-
-    async continueRun() {
-        try {
-            var continuedState = new ContinuedMigrationProgress(this.state);
-            for (var i = 0; i < this.steps.length; i++) {
-                await continuedState.step(this.steps[i]); 
-            }
-
-            return this.state;
-        }
-        catch (error) {
-            throw this.state.onError(error);
-        }
+        return this.progress;
     }
 
     async run() {
-        this.state.clear();
-        return await this.continueRun();
+        try {
+            for (var i = 0; i < this.steps.length; i++) {
+                await this.progress.step(this.steps[i]); 
+            }
+
+            return this.progress;
+        }
+        catch (error) {
+            throw this.progress.onError(error);
+        }
     }
 }

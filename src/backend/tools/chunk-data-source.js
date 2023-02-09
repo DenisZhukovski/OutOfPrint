@@ -6,10 +6,11 @@ export class ChunkDataSource {
         this.start = start;
         this.pageSize = pageSize;
         this.entities = null;
+        this.total = 0;
     }
 
     hasNext() {
-        if (this.entities != null) {
+        if (this.entities != null && this.total < this.pageSize) {
             return this.entities.hasNext();
         }
 
@@ -28,6 +29,7 @@ export class ChunkDataSource {
             this.entities = await this.entities.next();
         }
 
+        this.total += this.entities.items.length;
         return this.entities.items;
     }
 }

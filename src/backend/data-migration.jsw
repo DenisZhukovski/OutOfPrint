@@ -10,26 +10,19 @@
 **********/
 
 import { OutOfPrintMigration } from 'backend/migration/out-of-print-migration';
+import { StatefulMigration } from 'backend/migration/stateful-migration';
 import { LoggedMigration, LoggedMigrationRun } from 'backend/migration/logged-migration';
 import { MigrationRun } from 'backend/migration/migration-run';
-import { MigrationProgress } from 'backend/migration/migration-progress';
 
-export async function startMigation(state) {
-    var migrationRun = new LoggedMigrationRun(
+export async function startMigation(progress) {
+    return await new LoggedMigrationRun(
         new MigrationRun(
-            new LoggedMigration(
-                new OutOfPrintMigration()
-            ).steps(),
-            new MigrationProgress(state)
+            new StatefulMigration(
+                new LoggedMigration(
+                    new OutOfPrintMigration()
+                ),
+                progress
+            ).steps()
         )
-    );
-    if (state != null){
-          return await migrationRun.continueRun();
-    }
-    return await migrationRun.run();
-}
-
-export async function startMigationV2() {
-    return "Hello";
-    //await _migration.run();
+    ).run();
 }
