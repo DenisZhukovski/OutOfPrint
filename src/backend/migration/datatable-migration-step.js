@@ -54,16 +54,19 @@ export class DataTableMigrationStep {
             totalImported == totalToImport 
                 ? 'Complete'
                 : 'InProgress',
-            totalImported + "/" + totalToImport,
-            stepResult => new DataTableMigrationStep(
-                new ChunkDataSource(
-                    this.importFrom.dataSetId,
-                    stepResult.data.split('/')[0], 
-                    this.importFrom.pageSize
-                ),
-                this.importInto,
-                this.map
-            )
+            totalImported + "/" + totalToImport
+        );
+    }
+
+    recovered(progress) {
+        return new DataTableMigrationStep(
+            new ChunkDataSource(
+                this.importFrom.dataSetId,
+                progress.data.split('/')[0], 
+                this.importFrom.pageSize
+            ),
+            this.importInto,
+            this.map
         );
     }
 }

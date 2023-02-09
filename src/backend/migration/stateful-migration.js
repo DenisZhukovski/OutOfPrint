@@ -1,5 +1,3 @@
-import { SmartArray } from 'backend/tools/smart-array';
-
 export class StatefulMigration {
     constructor(origin, progress) {
         this.origin = origin;
@@ -7,9 +5,26 @@ export class StatefulMigration {
     }
 
     steps() {
-        return this.origin
-            .steps()
-            .map(step => new StatefulStep(step, this.progress));
+        var originSteps = this.origin.steps();
+        if (this.progress == null) {
+            return originSteps;
+        }
+
+        var statefulSteps = [];
+        var index = 0;
+        for (; index < this.progress.steps.length; index++) {
+            statefulSteps.push(
+                new StatefulStep(
+                    originSteps[index],
+                    this.progress.steps[index]
+                )
+            );
+        }
+
+        for (; index < originSteps.length; index++) {
+            statefulSteps.push(originSteps[index]);
+        }
+        return statefulSteps;
     }
 }
 
@@ -24,30 +39,11 @@ class StatefulStep {
     }
 
     async run() {
-        var step = this.stepToContinue();
-        if (step != null) {
-            return await step.run();
+        if (this.progress.state == "Complete") {
+            return this.progress;
         }
-        return await this.origin.run();
-    }
-
-    stepToContinue() {
-        var step = null;
-        if (this.progress != null) {
-            var progressSteps = new SmartArray(
-                this.progress.steps
-            ).where(step => step.name == this.origin.name());
-            for (let index = 0; index < progressSteps.length; index++) {
-                let stepToContinue = progressSteps[index];
-                if (stepToContinue.state != "Complete") {
-                    // Here to continue
-                    migrationStep = stepToContinue.toContinue(this.origin);
-                    stepToContinue.complete();
-                    return await this.origin.step(migrationStep);
-                }
-            }
-        }
-
-        return step;
+        return await this.origin
+            .recovered(this.progress)
+            .run();
     }
 }

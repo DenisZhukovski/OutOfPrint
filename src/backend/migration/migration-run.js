@@ -1,8 +1,8 @@
 import { MigrationProgress } from 'backend/migration/migration-progress';
 
 export class MigrationRun {
-    constructor(steps) {
-        this.steps = steps;
+    constructor(migration) {
+        this.migration = migration;
         this.progress = new MigrationProgress();
     }
 
@@ -12,8 +12,9 @@ export class MigrationRun {
 
     async run() {
         try {
-            for (var i = 0; i < this.steps.length; i++) {
-                await this.progress.step(this.steps[i]); 
+            var steps = this.migration.steps();
+            for (var i = 0; i < steps.length; i++) {
+                await this.progress.step(steps[i]); 
             }
 
             return this.progress;

@@ -21,11 +21,10 @@ export class MigrationProgress {
 }
 
 export class MigrationResult {
-    constructor(name, state, data, onContinue) {
+    constructor(name, state, data) {
         this.name = name;
         this.state = state;
         this.data = data;
-        this.onContinue = onContinue;
     }
 
     isComplete() {
@@ -34,9 +33,5 @@ export class MigrationResult {
 
     complete() {
         this.state = "Complete";
-    }
-
-    toContinue() {
-        return this.onContinue(this);
     }
 }

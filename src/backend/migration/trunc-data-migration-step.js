@@ -11,19 +11,22 @@ export class TruncDataMigrationStep {
     }
 
     async run() {
-        var results = [];
+        var data = [];
         for (var i = 0; i< this.dataSets.length; i++) {
             var dataSet = this.dataSets[i];
             await wixData.truncate(dataSet);
-            results.push(dataSet + " cleared");
+            data.push(dataSet + " cleared");
             console.log(dataSet + " cleared");
         }
 
         return new MigrationResult(
             this.name(),
             'Complete',
-            results,
-            stepResult => this
+            data
         );
+    }
+
+    recovered(progress) {
+        return this;
     }
 }
