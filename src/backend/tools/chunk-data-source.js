@@ -6,15 +6,23 @@ export class ChunkDataSource {
         this.start = start;
         this.pageSize = pageSize;
         this.entities = null;
-        this.total = 0;
+        this.totalFetched = 0;
     }
 
     hasNext() {
-        if (this.entities != null && this.total < this.pageSize) {
+        if (this.entities != null && this.totalFetched < this.pageSize) {
             return this.entities.hasNext();
         }
 
         return false;
+    }
+
+    currentIndex() {
+        return this.start + this.totalFetched;
+    }
+
+    async total() {
+        return await wixData.query(this.dataSetId).count();
     }
 
     async next() {
@@ -29,7 +37,7 @@ export class ChunkDataSource {
             this.entities = await this.entities.next();
         }
 
-        this.total += this.entities.items.length;
+        this.totalFetched += this.entities.items.length;
         return this.entities.items;
     }
 }
