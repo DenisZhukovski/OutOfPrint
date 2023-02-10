@@ -4,15 +4,17 @@ title Out Of Print - Class Diagram
 
 class OutOfPrintShop
 {
-  +Album[] Albums
-  +User[] Users
+  +Album[] Albums()
+  +User[] Users()
+  +Album[] Artists()
+  +Label[] Labels()
   +User Login(String email, String password)
 }
 
 class Artist {
   -Int Id
   +String Title
-  +Album[] Albums
+  +Album[] Albums()
   +Label[] Labels()
 }
 
@@ -70,27 +72,24 @@ class Order
 
   +String DeliveryAddress
   +String InvocingAddress
-  +OrderLine[] OrderLines
   +User User
   +Decimal TotalPrice()
   +ShippingCost ShippingCost()
+  +Album[] Albums()
 }
 
-class OrderLine
-{
-  Int OrderId
-  Int AlbumId
-}
 
 OutOfPrintShop o-- Album
+OutOfPrintShop o-- Artist
 OutOfPrintShop o-- User
+OutOfPrintShop o-- Label
 Artist o-- Album
 Artist o-- Label
 Label o-- Album
 User o-- Order
-Order o-- OrderLine
-Order *--  ShippingCost
-OrderLine *--  Album
+Order o-- Album
+Order *-- ShippingCost
+Order *-- User
 Album *-- Format
 
 @enduml

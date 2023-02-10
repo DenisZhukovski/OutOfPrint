@@ -1,0 +1,78 @@
+@startuml
+
+title Out Of Print - Database
+
+entity User
+{
+  Int ID
+  String Email
+  String FirstName
+  String LastName
+  String Password
+  String Address
+}
+
+entity Artist {
+  Int ID
+  String Title
+}
+
+entity ShippingCost
+{
+  Int ID
+  Decimal Price
+}
+
+entity Label
+{
+  Int ID
+  String Title
+}
+
+entity Album {
+  Int ID
+  Int ArtistId
+  Int LabelId
+  Int FormatId
+  String Title
+  Date Year
+  String Edition
+  // Image[] Images
+  String Details
+  String Condition
+  String SoundFileUri
+  Decimal Price
+}
+
+entity Format
+{
+  Int ID
+  String Title
+  Float Weight
+}
+
+entity Order
+{
+  Int ID
+  Int ShippingCostId
+  Int UserId
+  String DeliveryAddress
+  String InvocingAddress
+}
+
+entity OrderLine
+{
+  Int OrderId
+  Int AlbumId
+}
+
+OrderLine |o-- Order
+OrderLine |o-- Album
+Order ||-- User
+Order ||-- ShippingCost
+Album ||-- Format
+Album ||-- Label
+Album ||-- Artist
+
+
+@enduml

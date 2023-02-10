@@ -1,6 +1,6 @@
 # Out Of Print Class Diagram
 
-The [class diagram](docs/OutOfPrint.uml) describes relationships between major entities of OutOfPrint project:
+The [class diagram](docs/OutOfPrint.classes.uml) describes relationships between major entities of OutOfPrint project:
 - Users
 - Orders
 - Articles. 
