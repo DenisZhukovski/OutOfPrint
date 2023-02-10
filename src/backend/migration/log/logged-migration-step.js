@@ -19,4 +19,8 @@ export class LoggedStep {
             throw error;
         }
     }
+
+    recovered(progress) {
+        return this.origin.recovered(progress);
+    }
 }

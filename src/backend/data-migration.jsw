@@ -11,7 +11,8 @@
 
 import { OutOfPrintMigration } from 'backend/migration/out-of-print-migration';
 import { StatefulMigration } from 'backend/migration/stateful-migration';
-import { LoggedMigration, LoggedMigrationRun } from 'backend/migration/logged-migration';
+import { LoggedMigration } from 'backend/migration/log/logged-migration';
+import { LoggedMigrationRun } from 'backend/migration/log/logged-migration-run';
 import { MigrationRun } from 'backend/migration/migration-run';
 
 export async function startMigation(progress) {

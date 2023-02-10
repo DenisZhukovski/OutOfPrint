@@ -22,7 +22,6 @@ $w.onReady(async function () {
 			var state = await startMigation(null);
 			console.log(state);
 			while (!isMigrationSomplete(state)) {
-				await delay(1000);
 				state = await startMigation(state);
 				console.log(state);
 			}
