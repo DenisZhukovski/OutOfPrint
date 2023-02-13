@@ -4,6 +4,10 @@ export class LoggedMigrationTable {
         this.total = 0;
     }
 
+    id() {
+        return this.origin.id();
+    }
+
     async bulkInsert(items) {
         try {
             await this.origin.bulkInsert(items);
@@ -11,8 +15,8 @@ export class LoggedMigrationTable {
             console.log(this.total + " migrated"); 
         }
         catch (error) {
-            console.log(
-                "Bulk insert into " + this.origin.dataSetId + "failed.\n" + 
+            console.error(
+                "Bulk insert into " + this.origin.id() + " failed.\n" + 
                 "Items: " + items + "\n" + 
                 error.message
             );

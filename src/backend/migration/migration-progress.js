@@ -15,8 +15,20 @@ export class MigrationProgress {
         return this.error;
     }
 
+    isComplete() {
+        if (this.error == null) {
+            if (this.steps.length > 0) {
+		        return this.steps[this.steps.length - 1].state == "Complete";
+            }
+        }
+        
+        return false;
+    }
+
     async step(migrationStep) {
-        this.steps.push(await migrationStep.run()); 
+        var result = await migrationStep.run();
+        this.steps.push(result);
+        return result; 
     }
 }
 

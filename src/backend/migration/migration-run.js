@@ -14,7 +14,10 @@ export class MigrationRun {
         try {
             var steps = this.migration.steps();
             for (var i = 0; i < steps.length; i++) {
-                await this.progress.step(steps[i]); 
+                var stepResult = await this.progress.step(steps[i]);
+                if (!stepResult.isComplete()) {
+                    break;
+                }
             }
 
             return this.progress;

@@ -1,33 +1,29 @@
 import { MigrationResult } from 'backend/migration/migration-progress';
 import { ChunkDataSource } from 'backend/tools/chunk-data-source';
 
-export class DataTableMigrationStep {
+export class CopyTableMigrationStep {
     constructor (importFrom, importInto) {
         this.importFrom = importFrom
         this.importInto = importInto;
     }
 
     name() {
-        return "Migration from " + this.importFrom.dataSetId + " to " + this.importInto.dataSetId;
+        return "Migration from " + this.importFrom.dataSetId + " to " + this.importInto.id();
     }
 
     async run() {
         try {
-            await this.importInto.bulkInsert(
-                await this.importFrom.next()
-            );
-            while (this.importFrom.hasNext()) {
-                await this.importInto.bulkInsert(
-                    await this.importFrom.next()
-                );
-            }
+            do {
+                var items = await this.importFrom.next();
+                await this.importInto.bulkInsert(items);
+            } while (this.importFrom.hasNext());
 
             return await this.toResult();
         }
         catch (error) {
             throw new Error(
                 "Migration from " + this.importFrom.dataSetId +
-                " to " + this.importInto.dataSetId +
+                " to " + this.importInto.id() +
                 " failed.\n" + error.message
             );
         }
@@ -46,7 +42,7 @@ export class DataTableMigrationStep {
     }
 
     recovered(progress) {
-        return new DataTableMigrationStep(
+        return new CopyTableMigrationStep(
             new ChunkDataSource(
                 this.importFrom.dataSetId,
                 parseInt(progress.data.split('/')[0]), 

@@ -39,4 +39,13 @@ export class SmartArray {
             await actionAsync(this.array[i]);
         }
     }
+
+    async fromWixData(wixDataQuery) {
+        let allItems = wixDataQuery.items;
+        while (wixDataQuery.hasNext()) {
+            wixDataQuery = await wixDataQuery.next();
+            allItems = allItems.concat(wixDataQuery.items);
+        }
+        return new SmartArray(allItems);
+    }
 }

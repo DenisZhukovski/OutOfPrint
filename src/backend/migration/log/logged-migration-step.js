@@ -15,7 +15,7 @@ export class LoggedStep {
             return result;
         }
         catch (error) {
-            console.log(this.origin.name() + "failed.\n" + error.message);
+            console.error(this.name() + "failed.\n" + error.message);
             throw error;
         }
     }

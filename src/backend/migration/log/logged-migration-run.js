@@ -11,11 +11,17 @@ export class LoggedMigrationRun {
         try {
             console.log("Migration started.");
             var state = await this.origin.run();
-            console.log("Migration complete.");
+            if (state.isComplete()) {
+                console.log("Migration complete.");
+            }
+            else {
+                console.log("Migration interrupted.");
+            }
+            
             return state;
         }
         catch (error) {
-            console.log("Migration failed.\n" + error.message);
+            console.error("Migration failed.\n" + error.message);
             throw error;
         }
     }

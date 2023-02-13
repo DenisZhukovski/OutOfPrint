@@ -1,35 +1,30 @@
 import wixData from 'wix-data';
-import { SmartArray } from 'backend/tools/smart-array';
 
 export class MigrationTable {
-    constructor (dataSetId, map) {
+    constructor (dataSetId, mapItem) {
         this.dataSetId = dataSetId;
-        this.map = map;
+        this.mapItem = mapItem;
+    }
+
+    id() {
+        return this.dataSetId;
+    }
+
+    map(item) {
+        return this.mapItem(item);
     }
 
     async bulkInsert(items) {
+        console.log("INSERT MigrationTable");
+        if (items.length > 0){
+            console.log('total:' + items.length);
+            console.log(this.map(items[0]));
+        }
         if (items.length > 0) {
             await wixData.bulkInsert(
-                this.dataSetId,
+                this.id(),
                 items.map(item => this.map(item))
             );
         }
     }
 }
-
-// class NoDuplicatesMigrationTable {
-//     constructor (origin) {
-//         this.origin = origin;
-//     }
-
-//     async bulkInsert(items) {
-//         var entities = await wixData
-//             .query(this.origin.dataSetId)
-//             .hasSome("_id", items.map(item => item._id))
-//             .find();
-        
-//         var existingItems = new SmartArray()
-//         var noDuplicates = new SmartArray(items).where(item => entities.items. )
-//         await this.origin.bulkInsert(items);
-//     }
-// }

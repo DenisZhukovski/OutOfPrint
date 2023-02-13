@@ -1,3 +1,5 @@
+import { MigrationResult } from 'backend/migration/migration-progress';
+
 export class StatefulMigration {
     constructor(origin, progress) {
         this.origin = origin;
@@ -40,7 +42,11 @@ class StatefulStep {
 
     async run() {
         if (this.progress.state == "Complete") {
-            return this.progress;
+            return new MigrationResult(
+                this.progress.name,
+                this.progress.state,
+                this.progress.data
+            );
         }
         return await this.origin
             .recovered(this.progress)
