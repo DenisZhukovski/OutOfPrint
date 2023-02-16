@@ -12,7 +12,7 @@ export class LoggedMigrationTable {
         try {
             await this.origin.bulkInsert(items);
             this.total += items.length;
-            console.log(this.total + " migrated"); 
+            console.info(this.total + " migrated"); 
         }
         catch (error) {
             console.error(

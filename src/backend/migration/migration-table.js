@@ -15,11 +15,6 @@ export class MigrationTable {
     }
 
     async bulkInsert(items) {
-        console.log("INSERT MigrationTable");
-        if (items.length > 0){
-            console.log('total:' + items.length);
-            console.log(this.map(items[0]));
-        }
         if (items.length > 0) {
             await wixData.bulkInsert(
                 this.id(),

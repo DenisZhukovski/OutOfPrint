@@ -18,45 +18,57 @@ export class OutOfPrintMigration {
                 "Artists",
                 "Users"
             ]),
-            // new CopyTableMigrationStep(
-            //     new ChunkDataSource(
-            //         "ImportFromUsers",
-            //         0, 
-            //         1000
-            //     ),
-            //     new LoggedMigrationTable(
-            //         new MigrationTable(
-            //             "Users", 
-            //             user => {
-            //                 return {
-            //                     "_id": user._id,
-            //                     "Email": user.email,
-            //                 };
-            //             }
-            //         )
-            //     )
-            // ),
-            new CopyTableMigrationStep(
-                new ChunkDataSource(
-                    "ImportFromArticles",
-                    0, 
-                    1000
-                ),
-                new LoggedMigrationTable(
-                    new NoFieldDuplicates(
-                        new NoDuplicatesMigrationTable(
-                            new MigrationTable(
-                                "Labels", 
-                                article => {
-                                    return {
-                                        "Title": article.label,
-                                    };
-                                }
-                            )
-                        ),
-                        'Title'
-                    )
-                )
+            this.copyStep(
+                "ImportFromUsers",
+                "Users",
+                user => {
+                    return {
+                        "_id": user._id,
+                        "Email": user.email,
+                    };
+                },
+                'Email'
+            ),
+            this.copyStep(
+                "ImportFromArticles",
+                "Labels",
+                article => {
+                    return {
+                        "title": String(article.label)
+                    };
+                },
+                'title'
+            ),
+            this.copyStep(
+                "ImportFromArticles",
+                "Formats",
+                article => {
+                    return {
+                        "title": String(article.format),
+                        "weight": article.weight
+                    };
+                },
+                'title'
+            ),
+            this.copyStep(
+                "ImportFromArticles",
+                "Artists",
+                article => {
+                    return {
+                        "title": String(article.author)
+                    };
+                },
+                'title'
+            ),
+            this.copyStep(
+                "ImportFromArticles",
+                "Conditions",
+                article => {
+                    return {
+                        "title": String(article.condition)
+                    };
+                },
+                'title'
             )
         ];
 
@@ -65,5 +77,26 @@ export class OutOfPrintMigration {
 		// 	"ImportFromArticles",
 		// 	"ImportFromOrders"
         // ).migrateAll();
+    }
+
+    copyStep(copyFrom, copyTo, map, primaryField) {
+        return new CopyTableMigrationStep(
+            new ChunkDataSource(
+                copyFrom,
+                0, 
+                1000
+            ),
+            new LoggedMigrationTable(
+                new NoFieldDuplicates(
+                    new NoDuplicatesMigrationTable(
+                        new MigrationTable(
+                            copyTo, 
+                            map
+                        )
+                    ),
+                    primaryField
+                )
+            )
+        )
     }
 }

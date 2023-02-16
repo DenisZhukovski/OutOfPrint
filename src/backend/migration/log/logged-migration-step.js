@@ -9,9 +9,9 @@ export class LoggedStep {
 
     async run() {
         try {
-            console.log(this.origin.name() + " started.");
+            console.debug(this.name() + " started.");
             var result = await this.origin.run();
-            console.log(this.origin.name() + " complete.");
+            console.debug(this.name() + " finished.");
             return result;
         }
         catch (error) {
