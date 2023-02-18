@@ -23,3 +23,26 @@ export class MigrationTable {
         }
     }
 }
+
+export class PreCacheMigrationTable {
+    constructor (origin, cache) {
+        this.origin = origin;
+        this.cache = cache;
+    }
+
+    id() {
+        return this.origin.id();
+    }
+
+    map(item) {
+        return this.origin.map(item);
+    }
+
+    async bulkInsert(items) {
+        if (items.length > 0) {
+            var cache = await this.cache(items);
+            items.forEach(item => item.cache = cache);
+        }
+        await this.origin.bulkInsert(items);
+    }
+}

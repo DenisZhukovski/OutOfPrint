@@ -40,6 +40,26 @@ export class SmartArray {
         }
     }
 
+    async mapAsync(mapAsync) {
+        var result = [];
+        for (var i = 0; i < this.array.length; i++) {
+            result.push(await mapAsync(this.array[i]));
+        }
+        return result;
+    }
+
+    distinctMap(map) {
+        var mappedArray = [];
+        this.array.forEach(item => {
+            var mappedItem = map(item);
+            if (mappedArray.indexOf(mappedItem) == -1) {
+                mappedArray.push(String(mappedItem));
+            }
+        });
+
+        return mappedArray;
+    }
+
     async fromWixData(wixDataQuery) {
         let allItems = wixDataQuery.items;
         while (wixDataQuery.hasNext()) {
