@@ -12,66 +12,65 @@ export class OutOfPrintMigration {
             new TruncDataMigrationStep([
                 "OrderLines",
                 "Orders",
-                "ShippingCosts",
-                "Albums"
-               // "Formats",
-               // "Labels",
-              //  "Artists",
-              //  "Conditions",
-              //  "Users"
+                "Albums",
+                "Formats",
+                "Labels",
+                "Artists",
+                "Conditions",
+                "Users"
             ]),
-            // this.copyStep(
-            //     "ImportFromUsers",
-            //     "Users",
-            //     user => {
-            //         return {
-            //             "_id": user._id,
-            //             "Email": user.email,
-            //         };
-            //     },
-            //     'Email'
-            // ),
-            // this.copyStep(
-            //     "ImportFromArticles",
-            //     "Labels",
-            //     article => {
-            //         return {
-            //             "title": String(article.label)
-            //         };
-            //     },
-            //     'title'
-            // ),
-            // this.copyStep(
-            //     "ImportFromArticles",
-            //     "Formats",
-            //     article => {
-            //         return {
-            //             "title": String(article.format),
-            //             "weight": article.weight
-            //         };
-            //     },
-            //     'title'
-            // ),
-            // this.copyStep(
-            //     "ImportFromArticles",
-            //     "Artists",
-            //     article => {
-            //         return {
-            //             "title": String(article.author)
-            //         };
-            //     },
-            //     'title'
-            // ),
-            // this.copyStep(
-            //     "ImportFromArticles",
-            //     "Conditions",
-            //     article => {
-            //         return {
-            //             "title": String(article.condition)
-            //         };
-            //     },
-            //     'title'
-            // ),
+            this.copyStep(
+                "ImportFromUsers",
+                "Users",
+                user => {
+                    return {
+                        "_id": user._id,
+                        "Email": user.email,
+                    };
+                },
+                'Email'
+            ),
+            this.copyStep(
+                "ImportFromArticles",
+                "Labels",
+                article => {
+                    return {
+                        "title": String(article.label)
+                    };
+                },
+                'title'
+            ),
+            this.copyStep(
+                "ImportFromArticles",
+                "Formats",
+                article => {
+                    return {
+                        "title": String(article.format),
+                        "weight": article.weight
+                    };
+                },
+                'title'
+            ),
+            this.copyStep(
+                "ImportFromArticles",
+                "Artists",
+                article => {
+                    return {
+                        "title": String(article.author)
+                    };
+                },
+                'title'
+            ),
+            this.copyStep(
+                "ImportFromArticles",
+                "Conditions",
+                article => {
+                    return {
+                        "title": String(article.condition)
+                    };
+                },
+                'title'
+            ),
             new CopyTableMigrationStep(
                 new ChunkDataSource(
                     "ImportFromArticles",
@@ -84,6 +83,7 @@ export class OutOfPrintMigration {
                            "Albums",
                             article => {
                                 return {
+                                    "_id": article._id,
                                     "title": String(article.title),
                                     "artistId" : article.cache.id('Artists', String(article.author)), 
                                     "formatId" : article.cache.id('Formats', String(article.format)), 
@@ -101,14 +101,39 @@ export class OutOfPrintMigration {
                         (items) => new AlbumbsInsertCache(items).init()
                     )
                 )
+            ),
+            this.copyStep(
+                "ImportFromOrders",
+                "Orders",
+                order => {
+                    return {
+                        "_id": String(order.orderReference),
+                        "reference": String(order.orderReference),
+                        "userId": String(order.userId),
+                        "checkoutDate": order.checkoutDate
+                    };
+                },
+                '_id'
+            ),
+            new CopyTableMigrationStep(
+                new ChunkDataSource(
+                    "ImportFromOrders",
+                    0, 
+                    1000
+                ),
+                new LoggedMigrationTable(
+                    new MigrationTable(
+                        "OrderLines", 
+                        order => {
+                            return {
+                                "orderId" : String(order.orderReference),
+                                "albumId" : String(order.articleId)
+                            };
+                        }
+                    )
+                )
             )
         ];
-
-        // await new OutOfPrintMigration(
-        //     "ImportFromUsers",
-		// 	"ImportFromArticles",
-		// 	"ImportFromOrders"
-        // ).migrateAll();
     }
 
     copyStep(copyFrom, copyTo, map, primaryField) {
