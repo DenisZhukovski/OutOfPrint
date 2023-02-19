@@ -20,7 +20,9 @@ export class LoggedStep {
         }
     }
 
-    recovered(progress) {
-        return this.origin.recovered(progress);
+    recovered(stepProgress, totalProgress) {
+        return new LoggedStep(
+            this.origin.recovered(stepProgress, totalProgress)
+        );
     }
 }

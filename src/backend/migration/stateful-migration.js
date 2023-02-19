@@ -18,7 +18,8 @@ export class StatefulMigration {
             statefulSteps.push(
                 new StatefulStep(
                     originSteps[index],
-                    this.progress.steps[index]
+                    this.progress.steps[index],
+                    this.progress
                 )
             );
         }
@@ -31,9 +32,10 @@ export class StatefulMigration {
 }
 
 class StatefulStep {
-    constructor(origin, progress) {
+    constructor(origin, stepProgress, totalProgress) {
         this.origin = origin;
-        this.progress = progress;
+        this.stepProgress = stepProgress;
+        this.totalProgress = totalProgress;
     }
 
     name() {
@@ -41,15 +43,15 @@ class StatefulStep {
     }
 
     async run() {
-        if (this.progress.state == "Complete") {
+        if (this.stepProgress.state == "Complete") {
             return new MigrationResult(
-                this.progress.name,
-                this.progress.state,
-                this.progress.data
+                this.stepProgress.name,
+                this.stepProgress.state,
+                this.stepProgress.data
             );
         }
         return await this.origin
-            .recovered(this.progress)
+            .recovered(this.stepProgress, this.totalProgress)
             .run();
     }
 }

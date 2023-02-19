@@ -1,3 +1,4 @@
+import wixData from 'wix-data';
 import { TruncDataMigrationStep } from 'backend/migration/trunc-data-migration-step';
 import { CopyTableMigrationStep } from 'backend/migration/copy-table-migration-step';
 import { ChunkDataSource } from 'backend/tools/chunk-data-source';
@@ -38,7 +39,8 @@ export class OutOfPrintMigration {
                         "title": String(article.label)
                     };
                 },
-                'title'
+                'title',
+                100
             ),
             this.copyStep(
                 "ImportFromArticles",
@@ -49,7 +51,8 @@ export class OutOfPrintMigration {
                         "weight": article.weight
                     };
                 },
-                'title'
+                'title',
+                250
             ),
             this.copyStep(
                 "ImportFromArticles",
@@ -59,7 +62,8 @@ export class OutOfPrintMigration {
                         "title": String(article.author)
                     };
                 },
-                'title'
+                'title',
+                250
             ),
             this.copyStep(
                 "ImportFromArticles",
@@ -69,7 +73,8 @@ export class OutOfPrintMigration {
                         "title": String(article.condition)
                     };
                 },
-                'title'
+                'title',
+                250
             ),
             new CopyTableMigrationStep(
                 new ChunkDataSource(
@@ -119,29 +124,21 @@ export class OutOfPrintMigration {
                 new ChunkDataSource(
                     "ImportFromOrders",
                     0, 
-                    1000
+                    25
                 ),
                 new LoggedMigrationTable(
-                    new MigrationTable(
-                        "OrderLines", 
-                        order => {
-                            return {
-                                "orderId" : String(order.orderReference),
-                                "albumId" : String(order.articleId)
-                            };
-                        }
-                    )
+                    new InsertOrderAlbumReferencesMigrationTable()
                 )
             )
         ];
     }
 
-    copyStep(copyFrom, copyTo, map, primaryField) {
+    copyStep(copyFrom, copyTo, map, primaryField, pageSize) {
         return new CopyTableMigrationStep(
             new ChunkDataSource(
                 copyFrom,
                 0, 
-                1000
+                pageSize == null ? 1000 : pageSize
             ),
             new LoggedMigrationTable(
                 new NoFieldDuplicates(
@@ -153,5 +150,39 @@ export class OutOfPrintMigration {
                 )
             )
         )
+    }
+}
+
+class InsertOrderAlbumReferencesMigrationTable {
+    id() {
+        return 'Orders';
+    }
+
+    async bulkInsert(orders) {
+        if (orders.length > 0) {
+            var orderLines = this.byOrderReference(orders);
+            for(var orderReference in orderLines) {
+                await wixData.insertReference(
+                    this.id(),
+                    "albums",
+                    orderReference,
+                    orderLines[orderReference].albums
+                );
+            }
+        }
+    }
+
+    byOrderReference(orderLines) {
+        var orders = {};
+        orderLines.forEach(item => {
+            var orderRef = String(item.orderReference);
+            if (orders[orderRef] === undefined) {
+                orders[orderRef] = {
+                    albums: []
+                }
+            }
+            orders[orderRef].albums.push(String(item.articleId));
+        });
+        return orders;
     }
 }

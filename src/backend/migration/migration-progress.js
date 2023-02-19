@@ -7,12 +7,9 @@ export class MigrationProgress {
         this.error = null;
     }
     onError(exception) {
-        this.steps.push({
-            name: "Error",
-            error: new Error("Migration operation failed.\n" + exception.message)
-        });
-        this.error = new Error("Migration operation failed.\n" + exception.message);
-        return this.error;
+        this.steps.push(new MigrationResult("Step Error", 'Error', exception.message));
+        this.error = exception.message;
+        return exception;
     }
 
     isComplete() {
@@ -22,7 +19,7 @@ export class MigrationProgress {
             }
         }
         
-        return false;
+        return this.error != null;
     }
 
     async step(migrationStep) {

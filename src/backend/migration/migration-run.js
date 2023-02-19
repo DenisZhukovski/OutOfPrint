@@ -23,7 +23,8 @@ export class MigrationRun {
             return this.progress;
         }
         catch (error) {
-            throw this.progress.onError(error);
+            this.progress.onError(error);
+            return this.progress;
         }
     }
 }

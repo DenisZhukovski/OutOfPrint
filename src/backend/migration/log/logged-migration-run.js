@@ -9,13 +9,13 @@ export class LoggedMigrationRun {
 
     async run() {
         try {
-            console.debug("Migration started.");
+            console.info("Migration started.");
             var state = await this.origin.run();
             if (state.isComplete()) {
                 console.info("Migration complete.");
             }
             else {
-                console.debug("Migration interrupted.");
+                console.info("Migration interrupted.");
             }
             
             return state;

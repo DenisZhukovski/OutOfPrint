@@ -11,6 +11,7 @@
 
 import { OutOfPrintMigration } from 'backend/migration/out-of-print-migration';
 import { StatefulMigration } from 'backend/migration/stateful-migration';
+import { TimeAutoAdjustedMigration } from 'backend/migration/time-adjusted-migration';
 import { LoggedMigration } from 'backend/migration/log/logged-migration';
 import { LoggedMigrationRun } from 'backend/migration/log/logged-migration-run';
 import { MigrationRun } from 'backend/migration/migration-run';
@@ -20,7 +21,10 @@ export async function startMigation(progress) {
         new MigrationRun(
             new StatefulMigration(
                 new LoggedMigration(
-                    new OutOfPrintMigration()
+                    new TimeAutoAdjustedMigration(
+                        new OutOfPrintMigration(),
+                        progress
+                    )
                 ),
                 progress
             )
