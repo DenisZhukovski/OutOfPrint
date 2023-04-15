@@ -2,7 +2,7 @@
 
 The document describes the steps for data migration preparation process. The reason is because new Editor X project has lighter data structure regarding to original one. To be able to start the process original data shoud be exported as excel files.
 
-## CSV file generation
+## CSV file preparation
 1. Open target Excel file (<b>oop_articles_22-12-12_164112.xlsx</b> as an example) in Excel program.
 2. Delete first empty row from Excel document 
 
